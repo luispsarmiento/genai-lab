@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "calculatormcp_http": {
+      "type": "streamable-http",
+      "url": "http://localhost:3001/mcp"
+    }
+  }
+}
