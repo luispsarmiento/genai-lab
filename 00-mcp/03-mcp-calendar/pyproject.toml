@@ -1,0 +1,13 @@
+[project]
+name = "mcp-calendar"
+version = "0.1.0"
+description = "MCP Calendar Server"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp==1.18.0",
+    "icalendar==6.1.1"
+]
+
+[project.optional-dependencies]
+dev = ["debugpy==1.8.8"]
