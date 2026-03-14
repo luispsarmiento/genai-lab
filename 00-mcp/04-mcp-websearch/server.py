@@ -77,7 +77,7 @@ async def general_search(query: str, num_results: int = DEFAULT_RESULTS_LIMIT, c
         organic_results = response_data.get("organic_results", [])
         if not organic_results:
             await ctx.info("No se encontraron resultados orgánicos.")
-            return "No se encontraron resultados orgánicos."
+            return {"results": [], "message": "No se encontraron resultados orgánicos."}
         
         formatted_results = []
         for i, result in enumerate(organic_results[:num_results]):
@@ -87,7 +87,7 @@ async def general_search(query: str, num_results: int = DEFAULT_RESULTS_LIMIT, c
                 f"**Snippet**: {result.get('snippet', 'Sin resumen')}\n"
             )
         await ctx.info(f"Se encontraron {len(organic_results)} resultados orgánicos.")
-        return "\n\n".join(formatted_results)
+        return {"results": formatted_results}
     except Exception as e:
         await ctx.error(f"Error al realizar la búsqueda general: {str(e)}")
         return f"Error al realizar la búsqueda general: {str(e)}"
@@ -112,7 +112,7 @@ async def news_search(query: str, num_results: int = DEFAULT_RESULTS_LIMIT, ctx:
         news_results = response_data.get("news_results", [])
         if not news_results:
             await ctx.info("No se encontraron resultados de noticias.")
-            return "No se encontraron resultados de noticias."
+            return {"results": [], "message": "No se encontraron resultados de noticias."}
         
         formatted_results = []
         for i, result in enumerate(news_results[:num_results]):
@@ -124,7 +124,7 @@ async def news_search(query: str, num_results: int = DEFAULT_RESULTS_LIMIT, ctx:
                 f"**Snippet**: {result.get('snippet', 'Sin resumen')}\n"
             )
         await ctx.info(f"Se encontraron {len(news_results)} resultados de noticias.")
-        return "\n\n".join(formatted_results)
+        return {"results": formatted_results}
     except Exception as e:
         await ctx.error(f"Error al realizar la búsqueda de noticias: {str(e)}")
         return f"Error al realizar la búsqueda de noticias: {str(e)}"
@@ -150,7 +150,7 @@ async def product_search(query: str, num_results: int = DEFAULT_RESULTS_LIMIT, c
         product_results = response_data.get("shopping_results", [])
         if not product_results:
             await ctx.info("No se encontraron resultados de productos.")
-            return "No se encontraron resultados de productos."
+            return {"results": [], "message": "No se encontraron resultados de productos."}
         
         formatted_results = []
         for i, result in enumerate(product_results[:num_results]):
@@ -163,7 +163,7 @@ async def product_search(query: str, num_results: int = DEFAULT_RESULTS_LIMIT, c
                 f"**Link**: {result.get('link', 'Sin enlace')}\n"
             )
         await ctx.info(f"Se encontraron {len(product_results)} resultados de productos.")
-        return "\n\n".join(formatted_results)
+        return {"results": formatted_results}
     except Exception as e:
         await ctx.error(f"Error al realizar la búsqueda de productos: {str(e)}")
         return f"Error al realizar la búsqueda de productos: {str(e)}"
@@ -189,22 +189,22 @@ async def qna(question: str, ctx: Context = None) -> Dict[str, Any]:
         if answer_results:
             await ctx.info("Se encontró una respuesta directa.")
             if "answer" in answer_results:
-                return f"**Respuesta**: {answer_results['answer']}\n\n"
+                return {"results": [f"**Respuesta**: {answer_results['answer']}\n\n"]}
             elif "snippet" in answer_results:
-                return f"**Respuesta**: {answer_results['snippet']}\n\n"
+                return {"results": [f"**Respuesta**: {answer_results['snippet']}\n\n"]}
             elif "snippet_highlighted_words" in answer_results:
-                return f"**Respuesta**: {' '.join(answer_results['snippet_highlighted_words'])}\n\n"
+                return {"results": [f"**Respuesta**: {' '.join(answer_results['snippet_highlighted_words'])}\n\n"]}
         
         knowledge_results = response_data.get("knowledge_graph", {})
         if knowledge_results and "description" in knowledge_results:
             await ctx.info("Se encontró información en el grafo de conocimiento.")
-            return f"**Descripción**: {knowledge_results['description']}\n\n"
+            return {"results": [f"**Descripción**: {knowledge_results['description']}\n\n"]}
         
         if "featured_snippet" in response_data:
             featured_snippet = response_data["featured_snippet"]
             if "text" in featured_snippet:
                 await ctx.info("Se encontró un fragmento destacado.")
-                return f"**Fragmento destacado**: {featured_snippet['text']}\n\n"
+                return {"results": [f"**Fragmento destacado**: {featured_snippet['text']}\n\n"]}
         
         related_questions = response_data.get("related_questions", [])
         if related_questions:
@@ -215,7 +215,7 @@ async def qna(question: str, ctx: Context = None) -> Dict[str, Any]:
                     f"## {i+1}. {question.get('question', 'Sin pregunta')}\n"
                     f"**Link**: {question.get('link', 'Sin enlace')}\n"
                 )
-            return "\n\n".join(formatted_questions)
+            return {"results": formatted_questions}
         
         organic_results = response_data.get("organic_results", [])
         if organic_results:
@@ -227,7 +227,7 @@ async def qna(question: str, ctx: Context = None) -> Dict[str, Any]:
                     f"**Link**: {result.get('link', 'Sin enlace')}\n"
                     f"**Snippet**: {result.get('snippet', 'Sin resumen')}\n"
                 )
-            return "\n\n".join(formatted_results)
+            return {"results": formatted_results}
     except Exception as e:
         await ctx.error(f"Error al realizar la búsqueda de preguntas y respuestas: {str(e)}")
         return f"Error al realizar la búsqueda de preguntas y respuestas: {str(e)}"
